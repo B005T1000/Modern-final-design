@@ -14,19 +14,6 @@ steps:
           --region "$REGION" \
           --platform managed \
           --allow-unauthenticated
-
-  # Write a deployment entry to Cloud Logging so there is an explicit record
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        LOG_NAME="random-game-picker-deploy"
-        MESSAGE="Deployed $SERVICE_NAME to $REGION in project $PROJECT_ID"
-        # Write a simple structured log entry to Cloud Logging. The Cloud Build
-        # service account will need the Logging Writer role (roles/logging.logWriter).
-        gcloud logging write "$LOG_NAME" "$MESSAGE" --severity=INFO --project="$PROJECT_ID"
 options:
   logging: CLOUD_LOGGING_ONLY
 # Usage:
