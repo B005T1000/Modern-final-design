@@ -41,20 +41,101 @@
 </head>
 <body>
     <div class="container">
-        <h1>Random Game Picker</h1>
-        <button onclick="pickGame()">Pick a Random Game</button>
-        <div id="result"></div>
+        <header class="hero">
+            <h1>Random Game Picker</h1>
+            <p class="tagline">Can't decide what to play? Let fate choose.</p>
+        </header>
+
+        <main class="picker">
+            <button id="pickBtn" class="primary" aria-label="Pick a random game">Pick a Random Game</button>
+
+            <div id="resultCard" class="result-card" aria-live="polite" hidden>
+                <div id="result" class="result-text"></div>
+                <div id="meta" class="meta"></div>
+            </div>
+
+            <div class="history">
+                <h3>Recent picks</h3>
+                <ol id="historyList" class="history-list"></ol>
+                <button id="clearHistory" class="small">Clear history</button>
+            </div>
+        </main>
     </div>
 
     <script>
-        function pickGame() {
-            fetch('/pick')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('result').textContent = data.game;
-                })
-                .catch(error => console.error('Error:', error));
+        // Simple client-side UX: spinner, result card, and local history saved in localStorage
+        const pickBtn = document.getElementById('pickBtn');
+        const resultCard = document.getElementById('resultCard');
+        const resultEl = document.getElementById('result');
+        const metaEl = document.getElementById('meta');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+
+        function loadHistory() {
+            const raw = localStorage.getItem('rgp_history') || '[]';
+            try {
+                return JSON.parse(raw);
+            } catch (e) {
+                return [];
+            }
         }
+
+        function saveHistory(arr) {
+            localStorage.setItem('rgp_history', JSON.stringify(arr.slice(0, 10)));
+        }
+
+        function renderHistory() {
+            const items = loadHistory();
+            historyList.innerHTML = '';
+            if (items.length === 0) {
+                historyList.innerHTML = '<li class="muted">No picks yet</li>';
+                return;
+            }
+            items.forEach(i => {
+                const li = document.createElement('li');
+                li.textContent = `${i.game}`;
+                historyList.appendChild(li);
+            });
+        }
+
+        function showResult(game) {
+            resultEl.textContent = game;
+            resultCard.hidden = false;
+            // add to history
+            const items = loadHistory();
+            items.unshift({ game, at: new Date().toISOString() });
+            saveHistory(items);
+            renderHistory();
+        }
+
+        function setLoading(loading) {
+            pickBtn.disabled = loading;
+            pickBtn.textContent = loading ? 'Picking…' : 'Pick a Random Game';
+        }
+
+        async function pickGame() {
+            try {
+                setLoading(true);
+                const res = await fetch('/pick');
+                const data = await res.json();
+                if (data.error) {
+                    showResult('Error: ' + data.error);
+                } else {
+                    showResult(data.game);
+                }
+            } catch (err) {
+                showResult('Network error');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        pickBtn.addEventListener('click', pickGame);
+        clearHistoryBtn.addEventListener('click', () => { localStorage.removeItem('rgp_history'); renderHistory(); });
+
+        // initial render
+        renderHistory();
     </script>
 </body>
 </html>
