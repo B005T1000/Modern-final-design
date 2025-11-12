@@ -27,6 +27,9 @@ options:
   logging: CLOUD_LOGGING_ONLY
 images:
   - 'gcr.io/$PROJECT_ID/random-game-picker'
+substitutions:
+  _SERVICE_NAME: "game-picker"
+  _REGION: "us-central1"
 # Usage:
 # gcloud builds submit --config=cloudbuild.yaml --substitutions _SERVICE_NAME=game-picker,_REGION=us-central1
 # Make sure to set the PROJECT_ID in gcloud (gcloud config set project PROJECT_ID)
