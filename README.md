@@ -18,12 +18,12 @@ A simple web application that helps you pick a random game to play from a predef
    docker build -t random-game-picker .
    ```
 
-2. Run the container:
+2. Run the container (use an available host port; example uses 5001):
    ```bash
-   docker run -p 5000:5000 random-game-picker
+   docker run -p 5001:5000 random-game-picker
    ```
 
-3. Access the application at: http://localhost:5000
+3. Access the application at: http://localhost:5001
 
 ### Without Docker
 
@@ -49,3 +49,29 @@ To add or modify games, edit the `games.json` file. The file contains a JSON arr
 - Flask
 - Docker
 - HTML/CSS/JavaScript
+
+## Deploying to Google Cloud (Cloud Run)
+
+This project is packaged as a Docker container and can be deployed to Google Cloud Run. Below are the basic steps; replace PROJECT_ID, REGION, and SERVICE_NAME with your values.
+
+1. Set your project and enable required APIs:
+```bash
+gcloud config set project PROJECT_ID
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com
+```
+
+2. Build and push the image with Cloud Build (recommended):
+```bash
+gcloud builds submit --config=cloudbuild.yaml --substitutions _SERVICE_NAME=game-picker,_REGION=us-central1
+```
+
+3. Or build and push manually, then deploy to Cloud Run:
+```bash
+docker build -t gcr.io/PROJECT_ID/random-game-picker .
+docker push gcr.io/PROJECT_ID/random-game-picker
+gcloud run deploy game-picker --image gcr.io/PROJECT_ID/random-game-picker --region us-central1 --platform managed --allow-unauthenticated
+```
+
+Notes:
+- Ensure billing is enabled on the GCP project and you have the required IAM permissions (Cloud Run Admin, Storage Admin or Artifact Registry permissions, and Cloud Build Editor).
+- The `cloudbuild.yaml` provided in the repo automates build+deploy using substitutions for `_SERVICE_NAME` and `_REGION`.
