@@ -27,8 +27,8 @@ steps:
         # Write a simple structured log entry to Cloud Logging. The Cloud Build
         # service account will need the Logging Writer role (roles/logging.logWriter).
         gcloud logging write "$LOG_NAME" "$MESSAGE" --severity=INFO --project="$PROJECT_ID"
-    options:
-    logging: CLOUD_LOGGING_ONLY
+options:
+  logging: CLOUD_LOGGING_ONLY
 # Usage:
 # gcloud builds submit --config=cloudbuild.yaml --substitutions _SERVICE_NAME=game-picker,_REGION=us-central1
 # Make sure to set the PROJECT_ID in gcloud (gcloud config set project PROJECT_ID)
