@@ -47,7 +47,11 @@
         </header>
 
         <main class="picker">
-            <button id="pickBtn" class="primary" aria-label="Pick a random game">Pick a Random Game</button>
+
+            <div class="button-row">
+                <button id="pickVideoBtn" class="primary" aria-label="Pick a random video game">Pick a Video Game</button>
+                <button id="pickBoardBtn" class="primary alt" aria-label="Pick a random board/family game">Pick a Board/Family Game</button>
+            </div>
 
             <div id="resultCard" class="result-card" aria-live="polite" hidden>
                 <div id="result" class="result-text"></div>
@@ -108,30 +112,36 @@
             renderHistory();
         }
 
-        function setLoading(loading) {
-            pickBtn.disabled = loading;
-            pickBtn.textContent = loading ? 'Picking…' : 'Pick a Random Game';
+        function setLoading(type, loading) {
+            pickVideoBtn.disabled = loading;
+            pickBoardBtn.disabled = loading;
+            if (type === 'video') {
+                pickVideoBtn.textContent = loading ? 'Picking…' : 'Pick a Video Game';
+            } else if (type === 'board') {
+                pickBoardBtn.textContent = loading ? 'Picking…' : 'Pick a Board/Family Game';
+            }
         }
 
-        async function pickGame() {
+        async function pickGame(type) {
             try {
-                setLoading(true);
-                const res = await fetch('/pick');
+                setLoading(type, true);
+                const res = await fetch('/pick?type=' + encodeURIComponent(type));
                 const data = await res.json();
                 if (data.error) {
                     showResult('Error: ' + data.error);
                 } else {
-                    showResult(data.game);
+                    showResult(data.game + ' (' + (data.type === 'board' ? 'Board/Family Game' : 'Video Game') + ')');
                 }
             } catch (err) {
                 showResult('Network error');
                 console.error(err);
             } finally {
-                setLoading(false);
+                setLoading(type, false);
             }
         }
 
-        pickBtn.addEventListener('click', pickGame);
+        pickVideoBtn.addEventListener('click', () => pickGame('video'));
+        pickBoardBtn.addEventListener('click', () => pickGame('board'));
         clearHistoryBtn.addEventListener('click', () => { localStorage.removeItem('rgp_history'); renderHistory(); });
 
         // initial render

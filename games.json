@@ -1,5 +1,5 @@
 {
-    "games": [
+    "video_games": [
         "The Legend of Zelda: Breath of the Wild",
         "Super Mario Odyssey",
         "Red Dead Redemption 2",
@@ -15,5 +15,22 @@
         "The Last of Us",
         "Hades",
         "Stardew Valley"
+    ],
+    "board_games": [
+        "Monopoly",
+        "Catan",
+        "Ticket to Ride",
+        "Codenames",
+        "Pandemic",
+        "Carcassonne",
+        "Uno",
+        "Scrabble",
+        "Chess",
+        "Clue",
+        "Sushi Go!",
+        "Exploding Kittens",
+        "Betrayal at House on the Hill",
+        "Forbidden Island",
+        "Azul"
     ]
 }
