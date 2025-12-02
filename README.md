@@ -39,6 +39,21 @@ A simple web application that helps you pick a random game to play from a predef
 
 3. Access the application at: http://localhost:5000
 
+If the default port 5000 is in use, run with a different port:
+```bash
+# run on port 5001
+PORT=5001 python3 app.py
+```
+
+Health check endpoint:
+
+After the app is running you can check a lightweight health endpoint:
+```bash
+curl http://localhost:5000/healthz
+# or if you used PORT=5001
+curl http://localhost:5001/healthz
+```
+
 ## Customizing Games
 
 To add or modify games, edit the `games.json` file. The file contains a JSON array of game titles under the "games" key.
