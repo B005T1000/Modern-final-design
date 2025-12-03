@@ -90,3 +90,4 @@ gcloud run deploy game-picker --image gcr.io/PROJECT_ID/random-game-picker --reg
 Notes:
 - Ensure billing is enabled on the GCP project and you have the required IAM permissions (Cloud Run Admin, Storage Admin or Artifact Registry permissions, and Cloud Build Editor).
 - The `cloudbuild.yaml` provided in the repo automates build+deploy using substitutions for `_SERVICE_NAME` and `_REGION`.
+- CoPilot was used to help make this!
